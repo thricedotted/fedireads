@@ -1,3 +1,17 @@
+# python
 /venv
 *.pyc
 *.swp
+
+# user config
+.env
+
+# media storage
+/images
+
+# sqlite
+*.db
+*.db-journal
+
+# vscode config
+/.vscode

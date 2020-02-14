@@ -1,8 +1,32 @@
 #!/bin/bash
+
+# copy .env.default to .env if user didn't do this manually
+if [ ! -f .env ]; then
+  cp .env.default .env
+fi 
+
+# read variables set in .env
+export $(grep -v '^#' .env | xargs) > /dev/null
+
+if [ -z $DATABASE_BACKEND ]; then
+  echo "DATABASE_BACKEND is not set in .env! Defaulting to postgres."
+  DATABASE_BACKEND=postgres
+else
+  echo "Using $DATABASE_BACKEND as database backend..."
+fi
+
 rm fedireads/migrations/0*
 set -e
-dropdb fedireads
-createdb fedireads
+
+if [ "$DATABASE_BACKEND" = "sqlite" ]; then
+  rm fedireads.db
+elif [ "$DATABASE_BACKEND" = "postgres" ]; then
+  dropdb fedireads
+  createdb fedireads
+else
+  echo "$DATABASE_BACKEND is not supported! Please use postgres or sqlite."
+fi
+
 python manage.py makemigrations fedireads
 python manage.py migrate
 

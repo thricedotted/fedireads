@@ -64,10 +64,18 @@ WSGI_APPLICATION = 'fedireads.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
+# possible database configurations.
+# using a leading double underscore "__" to denote that these are *not* Django config vars.
+# TODO: break non-Django config vars out into a separate module? 
+__DATABASE_CONFIGS = {
+    'sqlite': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'fedireads.db')
+    },
+
+    'postgres': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'fedireads',
         'USER': 'fedireads',
@@ -75,6 +83,14 @@ DATABASES = {
         'HOST': '',
         'PORT': 5432
     }
+}
+
+# read DB backend from .env, default to postgres
+# TODO: raise error if DB not in DATABASE_CONFIGS
+__DATABASE_BACKEND = os.getenv('DATABASE_BACKEND', 'postgres')
+
+DATABASES = {
+    'default': __DATABASE_CONFIGS[__DATABASE_BACKEND]
 }
 
 LOGIN_URL = '/login/'
