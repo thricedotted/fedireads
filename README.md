@@ -3,22 +3,32 @@
 Social reading and reviewing, decentralized with ActivityPub
 
 ## Setting up the developer environment
-You will need postgres installed and running on your computer.
+To get started:
 
 ``` bash
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+cp .env.default .env    # copy default configuration file
+```
+
+You can choose from postgres or sqlite as a database engine.
+Postgres is recommended, but if you want to see fedireads up and running before setting up postgres, you can use sqlite.
+You can change the database backend in `.env`.
+
+If you're using postgres, you will need it installed and running on your computer. Then...
+- Create the fedireads database:
+``` bash
 createdb fedireads
 ```
 
-Create the psql user in `psql fedireads`:
+- Create the psql user in `psql fedireads`:
 ``` psql
 CREATE ROLE fedireads WITH LOGIN PASSWORD 'fedireads';
 GRANT ALL PRIVILEGES ON DATABASE fedireads TO fedireads;
 ```
 
-Initialize the database (this will also delete and re-create the migrations, which is not
+Finally, initialize the database (this will also delete and re-create the migrations, which is not
 a good idea for the long term but it's what I'm doing right now).
 ``` bash
 ./rebuilddb.sh
